@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.provider.Telephony;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,13 +23,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -63,11 +57,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         OKButton = findViewById (R.id.OKbutton);
 
 
-        if (!isSmsPermissionGranted ())
-            requestReadAndSendSmsPermission ();
-        else {
-            setReceiver ();
-        }
+
     }
 
     private void requestReadAndSendSmsPermission() {
@@ -78,8 +68,9 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         return ContextCompat.checkSelfPermission (this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
     }
 
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[],@NonNull int[] grantResults) {
         switch (requestCode) {
             case SMS_PERMISSION_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -116,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
             }
         }
         if (eTextGo) {
-            preferences.edit ().putString ("lbltxt",check).commit ();
+            preferences.edit ().putString ("lbltxt",check).apply ();
             eText.setVisibility (View.INVISIBLE);
             OKButton.setVisibility (View.INVISIBLE);
 
@@ -133,17 +124,26 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     public void btnSwitch(View view) {
         boolean switchState = submit.isChecked ();
-        Notification ntf = new Notification.Builder (this).setContentText ("Service is Running")
-                .setSmallIcon (R.mipmap.icon_36_)
-                .setContentTitle ("SMS_Listener").setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_))
-                .build ();
-        if (switchState){
-            ntfManager.notify (3,ntf);
-            startService (new Intent (this,MyService.class));
-        }else {
-            ntfManager.cancel (3);
-            stopService (new Intent (this, MyService.class));
+        if (!isSmsPermissionGranted ()) {
+            requestReadAndSendSmsPermission ();
+        } else {
+            Notification ntf = new Notification.Builder (this).setContentText ("Service is Running")
+                    .setSmallIcon (R.mipmap.icon_36_)
+                    .setContentTitle ("SMS_Listener").setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_))
+                    .build ();
+            if (switchState){
+                ntfManager.notify (3,ntf);
+                setReceiver ();
+                startService (new Intent (this,MyService.class));
+            }else {
+                ntfManager.cancel (3);
+                stopService (new Intent (this, MyService.class));
+                unregisterReceiver (receiver);
+            }
         }
+
+
+
     }
 
     @Override
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
         final String msg = "?sender="+sender+"&body="+body;
 
-        final JSONObject jsonMessage = new JSONObject ();
+        /*final JSONObject jsonMessage = new JSONObject ();
         try {
 
             jsonMessage.put ("sender", sender);
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
         } catch (JSONException e) {
             e.printStackTrace ();
-        }
+        }*/
 
         final Thread threadSendMsg = new Thread (new Runnable () {
             @Override
@@ -169,26 +169,21 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
                     URL url = new URL (addressDestination+URLEncoder.encode (msg, "UTF-8"));
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection ();
-
-                    /*conn.setRequestMethod ("POST");*/
-
-                    /*conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-                    conn.setRequestProperty ("Accept", "application/json");*/
-
-                    /*conn.setDoOutput (true);*/
-
                     conn.setDoInput (true);
 
-                    Log.i ("JSON", jsonMessage.toString ());
-                    Log.i ("QueryStringMsg", msg.toString ());
+                    /*conn.setRequestMethod ("POST");*/
+                    /*conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                    conn.setRequestProperty ("Accept", "application/json");*/
+                    /*conn.setDoOutput (true);*/
+                    /*Log.i ("JSON", jsonMessage.toString ());*/
 
+                    Log.i ("QueryStringMsg", msg);
 
 
                     /*DataOutputStream os = new DataOutputStream (conn.getOutputStream ());
                     os.writeBytes (msg.toString ());*/
 
                     //Receiving Data Back From server (OK/SUCCESS)
-                    
                     /*DataInputStream is = new DataInputStream (conn.getInputStream ());
                     byte[] dataReceived = new byte[1024];
                     int length = is.read (dataReceived);
@@ -205,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                     Toast.makeText (MainActivity.this, "UnreachableHOST Exception", Toast.LENGTH_LONG).show ();
 
                 } catch (Exception e) {
-                    e.printStackTrace ();
 
                     Toast.makeText (MainActivity.this, "Connection Exception", Toast.LENGTH_LONG).show ();
 
@@ -226,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     @Override
     protected void onDestroy() {
+        ntfManager.cancel (3);
         super.onDestroy ();
     }
 }
