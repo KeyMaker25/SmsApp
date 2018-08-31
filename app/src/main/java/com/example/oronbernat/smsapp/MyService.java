@@ -13,6 +13,7 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        receiver = new SMSReceiver ();
         registerReceiver (receiver,new IntentFilter ());
         return super.onStartCommand (intent, flags, startId);
     }
