@@ -1,9 +1,11 @@
 package com.example.oronbernat.smsapp;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        receiver = new SMSReceiver ();
         registerReceiver (receiver,new IntentFilter ());
         return super.onStartCommand (intent, flags, startId);
     }
@@ -23,6 +26,7 @@ public class MyService extends Service {
 
         return null;
     }
+
 
 
 }
