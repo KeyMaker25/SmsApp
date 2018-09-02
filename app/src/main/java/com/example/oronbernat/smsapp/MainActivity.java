@@ -1,6 +1,8 @@
 package com.example.oronbernat.smsapp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -9,6 +11,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,7 +28,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
@@ -47,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
 
-        preferences = this.getSharedPreferences ("lbltxt", 0);
+        preferences = getSharedPreferences ("lbltxt", 0);
         addressDestination = preferences.getString ("lbltxt", null);
 
         eText = findViewById (R.id.Label_id);
@@ -146,72 +155,61 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     }
 
+
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onTextReceived(String sender, String body) {
 
-        final String msg = "?sender="+sender+"&body="+body;
+        final String msg = "/?sender="+sender+"&body="+body;
 
-        /*final JSONObject jsonMessage = new JSONObject ();
-        try {
 
-            jsonMessage.put ("sender", sender);
-            jsonMessage.put ("body", body);
+        new AsyncTask<Void, Void, String> () {
 
-        } catch (JSONException e) {
-            e.printStackTrace ();
-        }*/
+            HttpURLConnection conn;
+            URL url;
 
-        final Thread threadSendMsg = new Thread (new Runnable () {
             @Override
-            public void run() {
+            protected void onPostExecute(String result) {
+                messageBox (result);
+                super.onPostExecute (result);
+            }
 
+            @Override
+            protected String doInBackground(Void... voids) {
+
+                String result;
                 try {
 
-                    URL url = new URL (addressDestination+URLEncoder.encode (msg, "UTF-8"));
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection ();
+                    url = new URL (addressDestination + msg);
+                    conn = (HttpURLConnection) url.openConnection ();
                     conn.setDoInput (true);
 
-                    /*conn.setRequestMethod ("POST");*/
-                    /*conn.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-                    conn.setRequestProperty ("Accept", "application/json");*/
-                    /*conn.setDoOutput (true);*/
-                    /*Log.i ("JSON", jsonMessage.toString ());*/
 
-                    Log.i ("QueryStringMsg", msg);
+                    InputStream is = conn.getInputStream ();
+                    int actuallyRead;
+                    byte[] arr = new byte[512];
+                    actuallyRead = is.read (arr);
+                    String s = new String (arr, 0, actuallyRead);
+                    Log.i ("Respond",s);
+                    if (s.equals ("OK")) {
+                        result = "OK";
+                    }else {
+                        result = "Server didn't respond";
+                    }
 
-
-                    /*DataOutputStream os = new DataOutputStream (conn.getOutputStream ());
-                    os.writeBytes (msg.toString ());*/
-
-                    //Receiving Data Back From server (OK/SUCCESS)
-                    /*DataInputStream is = new DataInputStream (conn.getInputStream ());
-                    byte[] dataReceived = new byte[1024];
-                    int length = is.read (dataReceived);
-                    String messageReceiver = new String (dataReceived);*/
-
-
-                    Log.i ("STATUS", String.valueOf (conn.getResponseCode ()));
-                    Log.i ("MSG", conn.getResponseMessage ());
-
-                    conn.disconnect ();
-
-                } catch (UnknownHostException e) {
-
-                    Toast.makeText (MainActivity.this, "UnreachableHOST Exception", Toast.LENGTH_LONG).show ();
-
-                } catch (Exception e) {
-
-                    Toast.makeText (MainActivity.this, "Connection Exception", Toast.LENGTH_LONG).show ();
-
+                } catch (IOException e) {
+                    result = e.toString ()+"ERROR";
                 }
 
-
+                return result;
             }
-        });
+        }.execute ();
 
-        threadSendMsg.start ();
+    }
 
-
+    private void messageBox(String message)
+    {
+        Toast.makeText (this, "Sending: "+message, Toast.LENGTH_SHORT).show ();
     }
 
     public void onPause() {
