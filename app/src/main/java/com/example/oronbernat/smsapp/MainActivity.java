@@ -36,6 +36,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener {
 
@@ -45,9 +47,10 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     private EditText eText;
     private Button OKButton;
     private SMSReceiver receiver;
-    private Switch submit;
+    private Switch submit, alert;
     private SharedPreferences preferences;
     private NotificationManager ntfManager;
+
 
 
     @Override
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         textView = findViewById (R.id.SendToAddress);
         textView.setText (addressDestination);
         OKButton = findViewById (R.id.OKbutton);
-
+        alert = findViewById (R.id.switch3);
 
 
     }
@@ -141,10 +144,12 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                     .setContentTitle ("SMS_Listener").setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_))
                     .build ();
             if (switchState){
+                alert.setVisibility (View.VISIBLE);
                 ntfManager.notify (3,ntf);
                 setReceiver ();
                 startService (new Intent (this,MyService.class));
             }else {
+                alert.setVisibility (View.INVISIBLE);
                 ntfManager.cancel (3);
                 stopService (new Intent (this, MyService.class));
                 unregisterReceiver (receiver);
@@ -158,47 +163,55 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     @SuppressLint("StaticFieldLeak")
     @Override
-    public void onTextReceived(String sender, String body) {
+    public void onTextReceived(final String sender, final String body) {
 
         final String msg = "/?sender="+sender+"&body="+body;
 
 
         new AsyncTask<Void, Void, String> () {
 
-            HttpURLConnection conn;
-            URL url;
-
             @Override
-            protected void onPostExecute(String result) {
-                messageBox (result);
-                super.onPostExecute (result);
+            protected void onPostExecute(String s) {
+                messageBox (s);
+                super.onPostExecute (s);
             }
 
             @Override
             protected String doInBackground(Void... voids) {
 
                 String result;
+                Date currentTime = Calendar.getInstance ().getTime ();
+                HttpURLConnection conn = null;
+                URL url;
+
                 try {
 
+                    Log.i ("SENDER",sender);
+                    Log.i ("MESSAGE", body);
+                    Log.i ("TIME", String.valueOf (currentTime));
                     url = new URL (addressDestination + msg);
                     conn = (HttpURLConnection) url.openConnection ();
-                    conn.setDoInput (true);
-
+                    conn.setDoOutput (true);
+                    conn.setRequestMethod ("POST");
 
                     InputStream is = conn.getInputStream ();
                     int actuallyRead;
                     byte[] arr = new byte[512];
                     actuallyRead = is.read (arr);
-                    String s = new String (arr, 0, actuallyRead);
-                    Log.i ("Respond",s);
-                    if (s.equals ("OK")) {
+                    String input = new String (arr,0,actuallyRead);
+                    Log.i ("Respond", input);
+                    String check = new String (arr,0,15);
+                    if (check.equals ("<!DOCTYPE html>"))
                         result = "OK";
-                    }else {
-                        result = "Server didn't respond";
-                    }
+                    else
+                        result = "ERROR";
 
                 } catch (IOException e) {
-                    result = e.toString ()+"ERROR";
+                    result ="ERROR: "+e.toString ();
+                    Log.i ("ERROR",  e.toString ());
+                }finally {
+                    if (conn!= null)
+                        conn.disconnect ();
                 }
 
                 return result;
@@ -207,18 +220,20 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     }
 
-    private void messageBox(String message)
-    {
-        Toast.makeText (this, "Sending: "+message, Toast.LENGTH_SHORT).show ();
+    private void messageBox(String message) {
+        if (alert.isChecked ())
+            Toast.makeText (this, "Sending: " + message, Toast.LENGTH_SHORT).show ();
     }
 
     public void onPause() {
+
         super.onPause ();
     }
 
     @Override
     protected void onDestroy() {
         ntfManager.cancel (3);
+        unregisterReceiver (receiver);
         super.onDestroy ();
     }
 }

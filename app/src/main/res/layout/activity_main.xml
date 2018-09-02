@@ -53,11 +53,22 @@
         android:layout_gravity="center"
         android:onClick="btnSwitch"
         android:id="@+id/switch2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Service                  "
         android:textSize="22sp"
         android:switchMinWidth="100dp"/>
+
+    <Switch
+        android:layout_gravity="center"
+        android:id="@+id/switch3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alerts                    "
+        android:textSize="22sp"
+        android:switchMinWidth="100dp"
+        android:visibility="invisible"/>
+
 
 
 </LinearLayout>

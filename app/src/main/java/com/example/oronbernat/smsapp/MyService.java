@@ -20,6 +20,12 @@ public class MyService extends Service {
         return super.onStartCommand (intent, flags, startId);
     }
 
+    @Override
+    public void onDestroy() {
+        unregisterReceiver (receiver);
+        super.onDestroy ();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
