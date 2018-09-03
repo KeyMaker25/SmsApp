@@ -25,8 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -156,9 +158,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     @Override
     public void onTextReceived(final String sender, final String body) {
 
-        final String msg = "/?sender="+sender+"&body="+body;
-
-
         new AsyncTask<Void, Void, String> () {
 
             @Override
@@ -170,13 +169,14 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
             @Override
             protected String doInBackground(Void... voids) {
 
+                final String msg;
                 String result = "Something Wired happen";
                 Date currentTime = Calendar.getInstance ().getTime ();
                 HttpURLConnection conn = null;
                 URL url;
 
                 try {
-
+                    msg = "/?sender="+sender+"&body="+ URLEncoder.encode (body,"UTF-8");
                     Log.i ("SENDER",sender);
                     Log.i ("MESSAGE", body);
                     Log.i ("TIME&DATE", String.valueOf (currentTime));
