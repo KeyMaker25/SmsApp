@@ -1,8 +1,6 @@
 package com.example.oronbernat.smsapp;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -12,8 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,15 +23,10 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -79,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     public boolean isSmsPermissionGranted() {
         return ContextCompat.checkSelfPermission (this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String permissions[],@NonNull int[] grantResults) {
@@ -160,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     }
 
-
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onTextReceived(final String sender, final String body) {
@@ -188,23 +177,23 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
                     Log.i ("SENDER",sender);
                     Log.i ("MESSAGE", body);
-                    Log.i ("TIME", String.valueOf (currentTime));
+                    Log.i ("TIME&DATE", String.valueOf (currentTime));
                     url = new URL (addressDestination + msg);
                     conn = (HttpURLConnection) url.openConnection ();
                     conn.setDoOutput (true);
                     conn.setRequestMethod ("POST");
-
+                    //Input check :
                     InputStream is = conn.getInputStream ();
                     int actuallyRead;
                     byte[] arr = new byte[512];
                     actuallyRead = is.read (arr);
                     String input = new String (arr,0,actuallyRead);
                     Log.i ("Respond", input);
-                    String check = new String (arr,0,15);
-                    if (check.equals ("<!DOCTYPE html>"))
+
+                    if (input.contains ("SMS will be sent"))
                         result = "OK";
                     else
-                        result = "ERROR";
+                        result = "SERVER INPUT ERROR";
 
                 } catch (IOException e) {
                     result ="ERROR: "+e.toString ();
@@ -232,8 +221,10 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     @Override
     protected void onDestroy() {
-        ntfManager.cancel (3);
-        unregisterReceiver (receiver);
         super.onDestroy ();
+        ntfManager.cancel (3);
+        if (receiver != null)
+            unregisterReceiver (receiver);
+
     }
 }
