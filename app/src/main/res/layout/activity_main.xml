@@ -31,13 +31,11 @@
         android:onClick="btnChangeLabel"/>
 
     <EditText
-
         android:hint="Insert URL address"
         android:visibility="invisible"
         android:id="@+id/Label_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textWebEmailAddress"
         />
 
     <Button
@@ -50,25 +48,25 @@
         android:visibility="invisible"/>
 
     <Switch
-        android:layout_gravity="center"
-        android:onClick="btnSwitch"
         android:id="@+id/switch2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Service                  "
+        android:layout_gravity="center"
+        android:onClick="btnSwitch"
+        android:switchMinWidth="100dp"
+        android:text="Service"
         android:textSize="22sp"
-        android:switchMinWidth="100dp"/>
+        android:paddingBottom="23dp"/>
 
     <Switch
-        android:layout_gravity="center"
         android:id="@+id/switch3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Alerts                    "
-        android:textSize="22sp"
+        android:layout_gravity="center"
         android:switchMinWidth="100dp"
-        android:visibility="invisible"/>
-
+        android:text="Alerts"
+        android:textSize="22sp"
+        android:visibility="invisible" />
 
 
 </LinearLayout>

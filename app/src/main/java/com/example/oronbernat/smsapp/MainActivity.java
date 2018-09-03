@@ -125,14 +125,16 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     public void btnSwitch(View view) {
+
+        Notification ntf = new Notification.Builder (this).setContentText ("Service is Running")
+                .setSmallIcon (R.mipmap.icon_36_)
+                .setContentTitle ("SMS_Listener")
+                .setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_)).build ();
+
         boolean switchState = submit.isChecked ();
         if (!isSmsPermissionGranted ()) {
             requestReadAndSendSmsPermission ();
-        } else {
-            Notification ntf = new Notification.Builder (this).setContentText ("Service is Running")
-                    .setSmallIcon (R.mipmap.icon_36_)
-                    .setContentTitle ("SMS_Listener").setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_))
-                    .build ();
+        }
             if (switchState){
                 alert.setVisibility (View.VISIBLE);
                 ntfManager.notify (3,ntf);
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                 stopService (new Intent (this, MyService.class));
                 unregisterReceiver (receiver);
             }
-        }
+
 
 
 
@@ -160,15 +162,15 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         new AsyncTask<Void, Void, String> () {
 
             @Override
-            protected void onPostExecute(String s) {
-                messageBox (s);
-                super.onPostExecute (s);
+            protected void onPostExecute(String result) {
+                messageBox (result);
+                super.onPostExecute (result);
             }
 
             @Override
             protected String doInBackground(Void... voids) {
 
-                String result;
+                String result = "Something Wired happen";
                 Date currentTime = Calendar.getInstance ().getTime ();
                 HttpURLConnection conn = null;
                 URL url;
@@ -189,12 +191,13 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                     actuallyRead = is.read (arr);
                     String input = new String (arr,0,actuallyRead);
                     Log.i ("Respond", input);
-
-                    if (input.contains ("SMS will be sent"))
+                    if (input.contains ("<status>0</status>"))
                         result = "OK";
-                    else
-                        result = "SERVER INPUT ERROR";
-
+                    if (input.contains ("<status>2</status>"))
+                        result = "Missing Data";
+                    if (input.contains ("<status>4</status>")){
+                        result = "No Credit";
+                    }
                 } catch (IOException e) {
                     result ="ERROR: "+e.toString ();
                     Log.i ("ERROR",  e.toString ());
