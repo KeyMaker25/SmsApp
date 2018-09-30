@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -8,142 +8,170 @@
     android:orientation="vertical"
     tools:context="com.example.oronbernat.smsapp.MainActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/current_label"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimary" />
-
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/toolbar" />
 
     <Switch
         android:id="@+id/switch2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@+id/tool_bar"
+        android:layout_centerHorizontal="true"
         android:onClick="btnSwitch"
         android:switchMinWidth="100dp"
         android:text="@string/service"
-        android:textSize="22sp"
-        android:paddingBottom="23dp"/>
+        android:textSize="22sp" />
 
     <Switch
         android:id="@+id/switch3"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="94dp"
         android:switchMinWidth="100dp"
         android:text="@string/alerts"
         android:textSize="22sp"
         android:visibility="invisible" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/textViewNumber"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="142dp"
+        android:text="Number: "
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/FinalNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textViewNumber"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp" />
+
 
     <EditText
         android:id="@+id/lblPhoneNumber"
-        android:layout_width="250dp"
+        android:layout_width="250sp"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:hint="@string/insert_your_phone_number" />
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/OKBtnNumber"
+        android:hint="@string/insert_your_phone_number"
+        android:inputType="number" />
 
-        <Button
-            android:id="@+id/OKBtnNumber"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:onClick="btnUpdateNumber"
-            android:text="@string/ok"
-            android:textSize="22sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/OKBtnNumber"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_above="@+id/OKBtnSource"
+        android:layout_alignParentEnd="true"
+        android:onClick="btnUpdateNumber"
+        android:text="@string/ok"
+        android:textSize="22sp" />
 
-        <EditText
-            android:id="@+id/lblSource"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:hint="@string/insert_source" />
 
-        <Button
-
-            android:id="@+id/OKBtnSource"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:onClick="btnUpdateSource"
-            android:text="@string/ok"
-            android:textSize="22sp" />
-
-        </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewSource"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:hint="@string/insert_url_address"
-            android:id="@+id/Label_id"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            />
-
-        <Button
-
-            android:layout_gravity="center"
-            android:id="@+id/OKbutton"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:text="@string/ok"
-            android:onClick="btnUpdateLabel" />
-
-
-    </LinearLayout>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="188dp"
+        android:gravity="center"
+        android:text="Source: "
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/txtSource"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textViewSource"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:textSize="25sp"
-        android:textAlignment="center"
-        android:layout_gravity="center" />
+        android:visibility="visible" />
+
+
+    <EditText
+        android:id="@+id/lblSource"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lblPhoneNumber"
+        android:hint="@string/insert_source" />
+
+
+    <Button
+        android:id="@+id/OKBtnSource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/OKbutton"
+        android:layout_alignParentEnd="true"
+        android:onClick="btnUpdateSource"
+        android:text="@string/ok"
+        android:textSize="22sp" />
+
+
+    <TextView
+        android:id="@+id/textViewAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="227dp"
+        android:text="Address: "
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/SendToAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
+        android:layout_below="@+id/textViewAddress"
+        android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:layout_gravity="center" />
+        android:textSize="25sp" />
 
-    <TextView
-        android:id="@+id/FinalNumber"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
+
+    <EditText
+        android:id="@+id/Label_id"
+        android:layout_width="250sp"
         android:layout_height="wrap_content"
-        android:textSize="25sp"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/OKBtnSource"
+        android:hint="@string/insert_url_address" />
 
     <Button
-        android:layout_marginTop="40dp"
+        android:id="@+id/OKbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="18sp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="128dp"
+        android:onClick="btnUpdateLabel"
+        android:text="@string/ok"
+        android:textSize="22sp" />
+
+
+
+
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
         android:onClick="OKVisible"
-        android:text="@string/change_source_phone_label" />
+        android:text="@string/change_source_phone_label"
+        android:textSize="18sp" />
 
 
 
-</LinearLayout>
+</RelativeLayout>

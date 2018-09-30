@@ -8,6 +8,7 @@
     <string name="insert_url_address">Insert URL address</string>
     <string name="current_label">Current Label</string>
     <string name="insert_your_phone_number">Insert Your Phone Number</string>
-    <string name="change_source_phone_label">Change Source/Phone/Label</string>
+    <string name="change_source_phone_label">Change Number/Source/Address</string>
     <string name="insert_source">Insert Source</string>
+    <string name="sms_app">Sms App</string>
 </resources>

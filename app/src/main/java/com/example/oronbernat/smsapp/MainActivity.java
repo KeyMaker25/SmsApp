@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     private static final int SMS_PERMISSION_CODE = 50;
     private TextView txtAddress, finalNumber, txtSource;
+    private TextView txtViewsSource_lbl, txtViewsNumber_lbl, txtViewsAddress_lbl ;
     private String addressDestination, phoneNumber, source;
     private EditText eText, ePhoneNumber, eSource;
     private Button OKButton, OKBtnNumber, OKBtnSource;
@@ -60,22 +61,34 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         addressDestination = preferences.getString ("lbltxt", null);
 
         //Init first view
-        OKBtnNumber = findViewById (R.id.OKBtnNumber);
-        OKBtnSource = findViewById (R.id.OKBtnSource);
-        finalNumber = findViewById (R.id.FinalNumber);
-        finalNumber.setText (phoneNumber);
-        ePhoneNumber = findViewById (R.id.lblPhoneNumber);
-        ePhoneNumber.setText (phoneNumber);
-        eSource = findViewById (R.id.lblSource);
-        eSource.setText (source);
+
+        txtViewsSource_lbl = findViewById (R.id.textViewSource);
         txtSource = findViewById (R.id.txtSource);
         txtSource.setText (source);
-        eText = findViewById (R.id.Label_id);
-        eText.setText (addressDestination);
-        submit = findViewById (R.id.switch2);
+
+        txtViewsNumber_lbl = findViewById (R.id.textViewNumber);
+        finalNumber = findViewById (R.id.FinalNumber);
+        finalNumber.setText (phoneNumber);
+
+        txtViewsAddress_lbl = findViewById (R.id.textViewAddress);
         txtAddress = findViewById (R.id.SendToAddress);
         txtAddress.setText (addressDestination);
+
+        OKBtnNumber = findViewById (R.id.OKBtnNumber);
+        OKBtnSource = findViewById (R.id.OKBtnSource);
         OKButton = findViewById (R.id.OKbutton);
+
+        ePhoneNumber = findViewById (R.id.lblPhoneNumber);
+        ePhoneNumber.setText (phoneNumber);
+
+        eSource = findViewById (R.id.lblSource);
+        eSource.setText (source);
+
+        eText = findViewById (R.id.Label_id);
+        eText.setText (addressDestination);
+
+        //Switch's
+        submit = findViewById (R.id.switch2);
         alert = findViewById (R.id.switch3);
 
         initView ();
@@ -114,12 +127,13 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
 
     private void initView(){
+
        if (!txtSource.toString ().isEmpty ()){
-            eSource.setVisibility (View.INVISIBLE);
-            OKBtnSource.setVisibility (View.INVISIBLE);
+           eSource.setVisibility (View.INVISIBLE);
+           OKBtnSource.setVisibility (View.INVISIBLE);
        }if (!finalNumber.toString ().isEmpty ()){
-            ePhoneNumber.setVisibility (View.INVISIBLE);
-            OKBtnNumber.setVisibility (View.INVISIBLE);
+           ePhoneNumber.setVisibility (View.INVISIBLE);
+           OKBtnNumber.setVisibility (View.INVISIBLE);
        }if(!txtAddress.toString ().isEmpty ()){
            OKButton.setVisibility (View.INVISIBLE);
            eText.setVisibility (View.INVISIBLE);
@@ -163,12 +177,12 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     }
 
-
     @SuppressLint("StaticFieldLeak")
     @Override
     public void onTextReceived(final String sender, final String body) {
 
         new AsyncTask<Void, Void, String> () {
+
 
             @Override
             protected void onPostExecute(String result) {
@@ -224,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     }
 
-
     private void messageBox(String message) {
         if (alert.isChecked ())
             Toast.makeText (this, "Sending: " + message, Toast.LENGTH_SHORT).show ();
@@ -247,6 +260,10 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         OKBtnNumber.setVisibility (View.INVISIBLE);
         ePhoneNumber.setVisibility (View.INVISIBLE);
 
+        txtViewsNumber_lbl.setVisibility (View.VISIBLE);
+        finalNumber.setVisibility (View.VISIBLE);
+
+
 
     }
 
@@ -255,6 +272,11 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         preferences.edit ().putString ("lblSourse", source).apply ();
         OKBtnSource.setVisibility (View.INVISIBLE);
         eSource.setVisibility (View.INVISIBLE);
+        txtSource.setText (source);
+
+        txtViewsSource_lbl.setVisibility (View.VISIBLE);
+        txtSource.setVisibility (View.VISIBLE);
+
 
 
     }
@@ -277,10 +299,15 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
             addressDestination = eText.getText ().toString ();
             txtAddress.setText (addressDestination);
+
+            txtViewsAddress_lbl.setVisibility (View.VISIBLE);
+            txtAddress.setVisibility (View.VISIBLE);
         }
     }
 
     public void OKVisible(View view) {
+
+
 
         eSource.setVisibility (View.VISIBLE);
         ePhoneNumber.setVisibility (View.VISIBLE);
@@ -289,8 +316,15 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         OKButton.setVisibility (View.VISIBLE);
         eText.setVisibility (View.VISIBLE);
         eText.setText (addressDestination,TextView.BufferType.EDITABLE);
-
         eSource.setVisibility (View.VISIBLE);
+
+
+        txtViewsAddress_lbl.setVisibility (View.INVISIBLE);
+        txtAddress.setVisibility (View.INVISIBLE);
+        txtViewsNumber_lbl.setVisibility (View.INVISIBLE);
+        finalNumber.setVisibility (View.INVISIBLE);
+        txtViewsSource_lbl.setVisibility (View.INVISIBLE);
+        txtSource.setVisibility (View.INVISIBLE);
 
 
     }
