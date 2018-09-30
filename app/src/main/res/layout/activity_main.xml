@@ -12,40 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text="Current Label"
-        android:textSize="22dp"
+        android:text="@string/current_label"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/colorPrimary" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/SendToAddress"
-        android:textSize="20sp"/>
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Change Label"
-        android:onClick="btnChangeLabel"/>
-
-    <EditText
-        android:hint="Insert URL address"
-        android:visibility="invisible"
-        android:id="@+id/Label_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
-    <Button
-        android:id="@+id/OKbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22dp"
-        android:text="OK"
-        android:onClick="btnUpdateLabel"
-        android:visibility="invisible"/>
 
     <Switch
         android:id="@+id/switch2"
@@ -54,19 +25,125 @@
         android:layout_gravity="center"
         android:onClick="btnSwitch"
         android:switchMinWidth="100dp"
-        android:text="Service"
+        android:text="@string/service"
         android:textSize="22sp"
         android:paddingBottom="23dp"/>
 
     <Switch
         android:id="@+id/switch3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:layout_gravity="center"
         android:switchMinWidth="100dp"
-        android:text="Alerts"
+        android:text="@string/alerts"
         android:textSize="22sp"
         android:visibility="invisible" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/lblPhoneNumber"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:hint="@string/insert_your_phone_number" />
+
+        <Button
+            android:id="@+id/OKBtnNumber"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:onClick="btnUpdateNumber"
+            android:text="@string/ok"
+            android:textSize="22sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/lblSource"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:hint="@string/insert_source" />
+
+        <Button
+
+            android:id="@+id/OKBtnSource"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:onClick="btnUpdateSource"
+            android:text="@string/ok"
+            android:textSize="22sp" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:hint="@string/insert_url_address"
+            android:id="@+id/Label_id"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            />
+
+        <Button
+
+            android:layout_gravity="center"
+            android:id="@+id/OKbutton"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text="@string/ok"
+            android:onClick="btnUpdateLabel" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtSource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/SendToAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:textAlignment="center"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/FinalNumber"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"/>
+
+    <Button
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:onClick="OKVisible"
+        android:text="@string/change_source_phone_label" />
+
 
 
 </LinearLayout>
