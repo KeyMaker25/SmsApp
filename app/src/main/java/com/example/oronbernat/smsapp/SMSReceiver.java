@@ -11,7 +11,6 @@ import android.util.Log;
 
 class SMSReceiver extends BroadcastReceiver{
 
-    private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
     private static final String TAG = "SMSBroadcastReceiver";
 
     private Listener listener;

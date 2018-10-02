@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -43,16 +44,19 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     private Button OKButton, OKBtnNumber, OKBtnSource;
     private SMSReceiver receiver;
     private Switch submit, alert;
+
     private SharedPreferences preferences;
     private NotificationManager ntfManager;
+
+
 
 
     @SuppressLint("ServiceCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
+
 
         //getting old data (local)
         preferences = getSharedPreferences ("Start", MODE_PRIVATE);
@@ -60,7 +64,16 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         source = preferences.getString ("lblSourse", null);
         addressDestination = preferences.getString ("lbltxt", null);
 
-        //Init first view
+        InitFields ();
+        initView ();
+
+
+    }
+
+
+
+    private void InitFields() {
+        //Init first Fields
 
         txtViewsSource_lbl = findViewById (R.id.textViewSource);
         txtSource = findViewById (R.id.txtSource);
@@ -90,12 +103,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         //Switch's
         submit = findViewById (R.id.switch2);
         alert = findViewById (R.id.switch3);
-
-        initView ();
-
     }
-
-
 
     private void requestReadAndSendSmsPermission() {
         ActivityCompat.requestPermissions (this, new String[]{Manifest.permission.READ_SMS}, SMS_PERMISSION_CODE);
@@ -125,9 +133,8 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         receiver.setListener (this);
     }
 
-
     private void initView(){
-
+        ;
        if (!txtSource.toString ().isEmpty ()){
            eSource.setVisibility (View.INVISIBLE);
            OKBtnSource.setVisibility (View.INVISIBLE);
@@ -139,9 +146,8 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
            eText.setVisibility (View.INVISIBLE);
        }
 
+
     }
-
-
 
     @Override
     protected void onStart() {
@@ -151,9 +157,14 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     public void btnSwitch(View view) {
 
+        Intent intent = new Intent (this,MainActivity.class);
+        intent.setFlags (Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
+        PendingIntent pIntent = PendingIntent.getActivity (this,0,intent,0);
+
         Notification ntf = new Notification.Builder (this).setContentText ("Service is Running")
                 .setSmallIcon (R.mipmap.icon_36_)
                 .setContentTitle ("SMS_Listener")
+                .setContentIntent (pIntent)
                 .setLargeIcon (BitmapFactory.decodeResource (this.getResources (), R.mipmap.icon_48_)).build ();
 
         boolean switchState = submit.isChecked ();
@@ -167,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                 startService (new Intent (this,MyService.class));
             }else {
                 alert.setVisibility (View.INVISIBLE);
-                ntfManager.cancel (3);
+                if (ntfManager != null)
+                    ntfManager.cancel (3);
                 stopService (new Intent (this, MyService.class));
                 unregisterReceiver (receiver);
             }
@@ -183,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
         new AsyncTask<Void, Void, String> () {
 
-
             @Override
             protected void onPostExecute(String result) {
                 messageBox (result);
@@ -193,15 +204,16 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
             @Override
             protected String doInBackground(Void... voids) {
 
-                final String msg;
+                final StringBuilder msg = new StringBuilder ();
                 String result = "server respond mismatch 0/2/4";
                 Date currentTime = Calendar.getInstance ().getTime ();
                 HttpURLConnection conn = null;
                 URL url;
 
                 try {
-                    msg = "/?sender=" +sender+"&body="+URLEncoder.encode (body,"UTF-8")+"&apphone="+phoneNumber
-                            +"&source="+source;
+                    msg.append ("/?sender=").append (sender+"&body=").append (URLEncoder.encode (body,"UTF-8"))
+                            .append ("&apphone="+(phoneNumber.isEmpty () ? "" : phoneNumber))
+                            .append ("&source="+(source.isEmpty () ? "" : source));
                     Log.i ("SENDER",sender);
                     Log.i ("MESSAGE", body);
                     Log.i ("TIME&DATE", String.valueOf (currentTime));
@@ -231,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                     if (conn!= null)
                         conn.disconnect ();
                 }
-
                 return result;
             }
         }.execute ();
@@ -268,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     public void btnUpdateSource(View view) {
+
         source = eSource.getText ().toString ();
         preferences.edit ().putString ("lblSourse", source).apply ();
         OKBtnSource.setVisibility (View.INVISIBLE);
