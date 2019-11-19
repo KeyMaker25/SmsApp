@@ -8,10 +8,7 @@ Priave use only.
 
 works on API 25 or lower, was create for single client use, in newer versions JobScheduler is needed.
 
-
-
-
-<a href="https://files.fm/u/e48bpdav#/view/Snip20181204_3.png"><img src="https://files.fm/thumb_show.php?i=gcenq3nx"></a>
-
-
-<a href="https://files.fm/u/e48bpdav#/view/Snip20181204_4.png"><img src="https://files.fm/thumb_show.php?i=vpvf6byt"></a>
+<p align="center" >
+  <img src="https://files.fm/thumb_show.php?i=gcenq3nx" width="250" >
+  <img src="https://files.fm/thumb_show.php?i=vpvf6byt" width="250" >
+</p>
